@@ -15,7 +15,7 @@ export default function Page() {
 	const [postComments, setPostComments] = useState<PostCommentDto[] | null>(
 		null,
 	);
-	
+
 	const deletePost = (id: number) => {
 		fetch(`http://localhost:8080/api/v1/posts/${id}`, {
 			method: "DELETE",
@@ -25,6 +25,20 @@ export default function Page() {
 				alert(data.msg);
 
 				router.replace("/posts");
+			});
+	};
+
+	const deleteComment = (id: number, commentId: number) => {
+		fetch(`http://localhost:8080/api/v1/posts/${id}/comments/${commentId}`, {
+			method: "DELETE",
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				alert(data.msg);
+
+				if (postComments == null) return;
+
+				setPostComments(postComments.filter((c) => c.id != commentId));
 			});
 	};
 
@@ -77,6 +91,15 @@ export default function Page() {
 					{postComments.map((comment) => (
 						<li key={comment.id} className="py-2">
 							{comment.content}
+							<button
+								className="ml-2 p-2 rounded border cursor-pointer"
+								onClick={() =>
+									confirm(`${comment.id}번 댓글을 정말로 삭제하시겠습니까?`) &&
+									deleteComment(id, comment.id)
+								}
+							>
+								삭제
+							</button>
 						</li>
 					))}
 				</ul>
