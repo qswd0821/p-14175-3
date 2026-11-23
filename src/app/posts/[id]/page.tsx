@@ -3,6 +3,7 @@
 import type { PostWithContentDto } from "@/type/post";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Page() {
   const router = useRouter();
@@ -50,6 +51,9 @@ export default function Page() {
         >
           삭제
         </button>
+        <Link className="p-2 rounded border" href={`/posts/${post.id}/edit`}>
+            수정
+        </Link>
       </div>
     </>
   );
