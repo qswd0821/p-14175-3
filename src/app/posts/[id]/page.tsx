@@ -59,6 +59,13 @@ export default function Page() {
 			return;
 		}
 
+		if (contentTextarea.value.length < 2) {
+			alert("댓글 내용을 2자 이상 입력해주세요.");
+			contentTextarea.focus();
+
+			return;
+		}
+
 		apiFetch(`/api/v1/posts/${id}/comments`, {
 			method: "POST",
 			body: JSON.stringify({
@@ -122,6 +129,8 @@ export default function Page() {
 					className="border p-2 rounded"
 					name="content"
 					placeholder="댓글 내용"
+					maxLength={100}
+					rows={5}
 				/>
 				<button className="p-2 rounded border cursor-pointer" type="submit">
 					작성

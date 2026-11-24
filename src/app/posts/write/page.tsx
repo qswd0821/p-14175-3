@@ -13,7 +13,7 @@ export default function Page() {
 
     const titleInput = form.elements.namedItem("title") as HTMLInputElement;
     const contentTextarea = form.elements.namedItem(
-      "content",
+      "content"
     ) as HTMLTextAreaElement;
 
     titleInput.value = titleInput.value.trim();
@@ -22,6 +22,12 @@ export default function Page() {
       alert("제목을 입력해주세요.");
       titleInput.focus();
 
+      return;
+    }
+
+    if (titleInput.value.length < 2) {
+      alert("제목을 2자 이상 입력해주세요.");
+      titleInput.focus();
       return;
     }
 
@@ -34,7 +40,13 @@ export default function Page() {
       return;
     }
 
-    apiFetch("/api/v1/posts", {
+    if (contentTextarea.value.length < 2) {
+      alert("내용을 2자 이상 입력해주세요.");
+      contentTextarea.focus();
+      return;
+    }
+
+    apiFetch(`/api/v1/posts`, {
       method: "POST",
       body: JSON.stringify({
         title: titleInput.value,
@@ -61,14 +73,16 @@ export default function Page() {
           type="text"
           name="title"
           placeholder="제목"
-          autoFocus
+          maxLength={100}
         />
         <textarea
           className="border p-2 rounded"
           name="content"
           placeholder="내용"
+          maxLength={5000}
+          rows={10}
         />
-        <button className="border p-2 rounded cursor-pointer" type="submit">
+        <button className="border p-2 rounded" type="submit">
           저장
         </button>
       </form>
