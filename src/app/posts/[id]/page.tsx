@@ -1,5 +1,6 @@
 "use client";
 
+import { apiFetch } from "@/lib/backend/client";
 import type { PostCommentDto, PostWithContentDto } from "@/type/post";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,29 +18,25 @@ export default function Page() {
 	);
 
 	const deletePost = (id: number) => {
-		fetch(`http://localhost:8080/api/v1/posts/${id}`, {
+		apiFetch(`/api/v1/posts/${id}`, {
 			method: "DELETE",
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				alert(data.msg);
+		}).then((data) => {
+			alert(data.msg);
 
-				router.replace("/posts");
-			});
+			router.replace("/posts");
+		});
 	};
 
 	const deleteComment = (id: number, commentId: number) => {
-		fetch(`http://localhost:8080/api/v1/posts/${id}/comments/${commentId}`, {
+		apiFetch(`/api/v1/posts/${id}/comments/${commentId}`, {
 			method: "DELETE",
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				alert(data.msg);
+		}).then((data) => {
+			alert(data.msg);
 
-				if (postComments == null) return;
+			if (postComments == null) return;
 
-				setPostComments(postComments.filter((c) => c.id != commentId));
-			});
+			setPostComments(postComments.filter((c) => c.id != commentId));
+		});
 	};
 
 	const handleCommentWriteFormSubmit = (
@@ -62,35 +59,34 @@ export default function Page() {
 			return;
 		}
 
-		fetch(`http://localhost:8080/api/v1/posts/${id}/comments`, {
+		apiFetch(`/api/v1/posts/${id}/comments`, {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json; charset=utf-8",
-			},
 			body: JSON.stringify({
 				content: contentTextarea.value,
 			}),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				alert(data.msg);
+		}).then((data) => {
+			alert(data.msg);
 
-				contentTextarea.value = "";
+			contentTextarea.value = "";
 
-				if (postComments == null) return;
+			if (postComments == null) return;
 
-				setPostComments([...postComments, data.data]);
-			});
+			setPostComments([...postComments, data.data]);
+		});
 	};
 
 	useEffect(() => {
-		fetch(`http://localhost:8080/api/v1/posts/${id}`)
-			.then((res) => res.json())
-			.then(setPost);
+		apiFetch(`/api/v1/posts/${id}`)
+			.then(setPost)
+			.catch((error) => {
+				alert(`${error.resultCode} : ${error.msg}`);
+			});
 
-		fetch(`http://localhost:8080/api/v1/posts/${id}/comments`)
-			.then((res) => res.json())
-			.then(setPostComments);
+		apiFetch(`/api/v1/posts/${id}/comments`)
+			.then(setPostComments)
+			.catch((error) => {
+				alert(`${error.resultCode} : ${error.msg}`);
+			});
 	}, [id]);
 
 	if (post == null) return <div>로딩중...</div>;

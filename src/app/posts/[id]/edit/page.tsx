@@ -1,5 +1,6 @@
 "use client";
 
+import { apiFetch } from "@/lib/backend/client";
 import type { PostWithContentDto } from "@/type/post";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,9 +14,7 @@ export default function Page() {
   const [post, setPost] = useState<PostWithContentDto | null>(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/v1/posts/${id}`)
-      .then((res) => res.json())
-      .then(setPost);
+    apiFetch(`/api/v1/posts/${id}`).then(setPost);
   }, [id]);
 
   if (post == null) return <div>로딩중...</div>;
@@ -35,7 +34,6 @@ export default function Page() {
     if (titleInput.value.length === 0) {
       alert("제목을 입력해주세요.");
       titleInput.focus();
-
       return;
     }
 
@@ -44,26 +42,20 @@ export default function Page() {
     if (contentTextarea.value.length === 0) {
       alert("내용을 입력해주세요.");
       contentTextarea.focus();
-
       return;
     }
 
-    fetch(`http://localhost:8080/api/v1/posts/${id}`, {
+    apiFetch(`/api/v1/posts/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-      },
       body: JSON.stringify({
         title: titleInput.value,
         content: contentTextarea.value,
       }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        alert(data.msg);
+    }).then((data) => {
+      alert(data.msg);
 
-        router.replace(`/posts/${id}`);
-      });
+      router.replace(`/posts/${id}`);
+    });
   };
 
   return (
@@ -85,7 +77,7 @@ export default function Page() {
           placeholder="내용"
           defaultValue={post.content}
         />
-        <button className="border p-2 rounded cursor-pointer" type="submit">
+        <button className="border p-2 rounded" type="submit">
           저장
         </button>
       </form>
